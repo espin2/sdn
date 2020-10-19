@@ -1,0 +1,96 @@
+###update repository###
+OS: Ubuntu 16.04
+
+apt update
+###install git###
+apt install git
+
+1. INSTALASI mininet
+###install mininet###
+1. clone folder mininet dari github
+git clone git://github.com/mininet/mininet
+
+2. install mininet yang sudah di clone dari github. (-nfv artinya hanya install mininet,openflow reference switch, openvswitch)
+mininet/util/install.sh -nfv
+
+3. verifikasi hasil setelah instalasi mininet
+sudo mn --test pingall
+
+2. INSTALASI KONTROLLER
+###install ryu###
+1. install paket-paket pendukung untuk instalasi ryu( langkah ini di install hanya untuk ubuntu 16.04 dan dibawahnya)
+apt install gcc python-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev
+
+2. clone folder ryu dari github
+git clone https://github.com/faucetsdn/ryu.git
+
+3. masuk ke folder ryu setelah itu melakukan instalasi ryu
+cd ryu; pip install .
+
+###running ryu###
+1. menjalankan ryu dengan app simple_switch_stp_13 karena topologi yang dijalankan terdapat looping. maka dari itu dibutuhkan app stp pada ryu.
+ryu-manager ryu.app.simple_switch_stp_13
+
+###running topo###
+1. menjalankan custom topologi yang telah dibuat pada tugas sebelumnya.(script terlampir)
+mn --custom sdn.py --topo mytopo --controller=remote
+2. verifikasi seluruh host dapat terhubung satu sama lain
+pingall
+
+3. TOPOLOGI JARINGAN
+###topologi###
+1. melihat keseluruhan topologi yang dihasilkan oleh kontroler ryu. (host memang tidak terlihat)
+ryu-manager --observe-links ryu/ryu/app/gui_topology/ gui_topology.py
+2. akses via website ip_kontroller:8080  
+
+4. SIMULASI
+-iperf menggunakan protokol UDP
+-waktu pengambilan data selama 10 detik
+-print waktu trafik 1 detik
+-bandwidth 1000mb
+
+###testing iperf h1 - h2###
+
+1. masuk ke terminal h2
+xterm h2
+
+2. konfigurasi iperf menjadi sisi server
+iperf -s -u -t 10 -i 1
+
+3. masuk ke terminal h1
+xterm h1
+
+4. konfigurasi iperf menjadi sisi client
+iperf -c 10.0.0.2 -t 10 -i 1 -u -b 1000m
+
+###testing iperf h1 - h3###
+
+1. masuk ke terminal h3
+xterm h3
+
+2. konfigurasi iperf menjadi sisi server
+iperf -s -u -t 10 -i 1
+
+3. masuk ke terminal h1
+xterm h1
+
+4. konfigurasi iperf menjadi sisi client
+iperf -c 10.0.0.3 -t 10 -i 1 -u -b 1000m
+
+###testing iperf h1 - h4###
+1. masuk ke terminal h4
+xterm h4
+
+2. konfigurasi iperf menjadi sisi server
+iperf -s -u -t 10 -i 1
+
+3. masuk ke terminal h1
+xterm h1
+
+4. konfigurasi iperf menjadi sisi client
+iperf -c 10.0.0.4 -t 10 -i 1 -u -b 1000m
+
+
+
+
+
